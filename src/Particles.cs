@@ -141,7 +141,6 @@ namespace ParticleSystem
 
                     // Rotating the particle
                     particles.Rotation[i] += (int)(5 % factor); // random-ish?
-                    particles.Rotation[i] %= 360; // cap the rotation
 
                 }
                 // The particle is dead
