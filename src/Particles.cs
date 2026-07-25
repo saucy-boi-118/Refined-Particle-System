@@ -22,11 +22,11 @@ namespace ParticleSystem
         private static readonly Dictionary<Shapes, int> ShapeSides = new()
     {
         {Shapes.Triangle, 3},
-        {Shapes.Square, 3},
-        {Shapes.Pentagon, 3},
-        {Shapes.Hexagon, 3},
-        {Shapes.Septagon, 3},
-        {Shapes.Circle, 8}
+        {Shapes.Square, 4},
+        {Shapes.Pentagon, 5},
+        {Shapes.Hexagon, 6},
+        {Shapes.Septagon, 7},
+        {Shapes.Circle, 10}
     };
 
         // Struct of Array system for particles
@@ -87,6 +87,11 @@ namespace ParticleSystem
             return Vector2.Normalize(RandomVec) * ((rng.NextSingle() + 0.1f) * Speed);
         }
 
+        public static void ChangeShape(Shapes shape)
+        {
+            CurrentShape = shape;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -98,7 +103,6 @@ namespace ParticleSystem
         /// <param name="Speed"=> The speed in which the particle moves </param>/
         /// <param name="Size_Change"=> By how much in bytes the fade is changing by </param>/
         /// <param name="Fade_Change"=> By how much in bytes the fade is changing by </param>/
-
         private static int i; 
         private static float factor; // for getting the ratio, factor for lerp
         private static Color particleColor; 
