@@ -128,8 +128,8 @@ namespace UI
             Main = HoverColor[style];
         }
         // Drawing 
-        Raylib.DrawRectangleRounded(Bounds, 0.5f, 5, Main);
-        Raylib.DrawRectangleRoundedLinesEx(Bounds, 0.5f, 5, 10, HighLightColor[style]);
+        Raylib.DrawRectangleRec(Bounds, Main);
+        Raylib.DrawRectangleLinesEx(Bounds, Thickness[style], HighLightColor[style]);
         DrawLabel(Bounds, Label, HighLightColor[style]);
     }
     public static void UIButton(Rectangle Bounds, Style style, Action? action, string Label="Button")

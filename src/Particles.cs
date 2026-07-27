@@ -1,6 +1,5 @@
 using Raylib_cs;
 using System.Numerics;
-using System.Security.Cryptography;
 
 namespace ParticleSystem
 {
@@ -54,13 +53,13 @@ namespace ParticleSystem
 
         // Functions for Particles
         private static readonly Random rng = new();
-        protected void OverWriteParticle(int index, Vector2 origin, float size, Color StartColor, float Speed)
+        protected void OverWriteParticle(int index, Vector2 origin, float size, float Speed, float SpeedDivior=10)
         {
             // Define a new particle
 
             // Set the position and velocity
             particles.Position[index] = origin;
-            particles.Velocity[index] = RandomVelocity(Speed);
+            particles.Velocity[index] = RandomVelocity(Speed, SpeedDivior);
 
             // Setting size, age, alpha and alive value
             particles.Size[index] = size;
@@ -74,7 +73,7 @@ namespace ParticleSystem
         }
 
         private static Vector2 RandomVec = Vector2.Zero;
-        public static Vector2 RandomVelocity(float Speed)
+        public static Vector2 RandomVelocity(float Speed, float SpeedDivisor)
         {
             // Create a new vector
             RandomVec = Vector2.Zero;
@@ -84,7 +83,7 @@ namespace ParticleSystem
             RandomVec.Y = (rng.NextSingle() + 0.1f) * 2 - 1;
 
             // Turns it into a velocity by multiplying by speed
-            return Vector2.Normalize(RandomVec) * ((rng.NextSingle() + 0.1f) * Speed);
+            return Vector2.Normalize(RandomVec) * ((rng.NextSingle() + 0.1f) * (Speed/SpeedDivisor));
         }
 
         public static void ChangeShape(Shapes shape)
@@ -108,7 +107,7 @@ namespace ParticleSystem
         private static Color particleColor; 
         public void UpdateParticles(
             Vector2 origin, Vector2 Direction, int Lifespan, Color StartColor, Color EndColor, 
-            float Size, float DirectionFactor, float Size_Change, byte Fade_Change)
+            float Size, float DirectionFactor, float Size_Change, byte Fade_Change, float SpeedDivior=10)
         {
             for (i = 0; i < particles.Position.Length-1; i++)
             {
@@ -116,7 +115,7 @@ namespace ParticleSystem
                 if (particles.Alive[i] == true)
                 {
                     // Update the Position with Velocity
-                    particles.Velocity[i] += Direction * DirectionFactor *  Raylib.GetFrameTime(); // Add to the randomized velocity
+                    particles.Velocity[i] += Direction * DirectionFactor * Raylib.GetFrameTime(); // make the velocity
                     particles.Position[i] += particles.Velocity[i] * Raylib.GetFrameTime();
 
                     // Change the particle size
@@ -147,7 +146,7 @@ namespace ParticleSystem
                 else if (particles.Alive[i] == false && rng.NextSingle() < 0.1f)
                 {
                     // Overwrite the particle
-                    OverWriteParticle(i, origin, Size, StartColor, DirectionFactor);
+                    OverWriteParticle(i, origin, Size, DirectionFactor, SpeedDivior);
                 }
 
                 // Drawing the particle

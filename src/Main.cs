@@ -28,7 +28,7 @@ class Program
 
         // Enum value for changing shape
         float minShape = 0, maxShape = Enum.GetNames<PARTICLE2D.Shapes>().Length-1, CurrentShape = 0;
-        Rectangle shapeBase = new(20,100,125,30);
+        Rectangle shapeBase = new(20,40,125,30);
         Rectangle sliderShape = new(shapeBase.Center.X,shapeBase.Center.Y, SIZE);
 
         // Sliders for changing colors
@@ -73,6 +73,23 @@ class Program
         float minColor = 0;
         float maxColor = 255;
 
+        // Direction changing and visualization
+        Vector2 Direction = Vector2.Zero;
+        float Angle = 0, AngleMin = 0, AngleMax = 2*MathF.PI, CircleRadius = 20;
+        Vector2 CircleCenter = new(LeftPanel.Center.X + CircleRadius + 45, LeftPanel.Y+165+(BASES.Y/2));
+        Rectangle BaseAngle = new(LeftPanel.X + 20, LeftPanel.Y+165, BASES);
+        Rectangle AngleSlider = new(BaseAngle.Center, SIZE);
+        string directionText = "DIRECTION";
+
+        // Direction factor changing
+        Rectangle dirFactorBase = new(LeftPanel.X + 20, LeftPanel.Y+230, BASES);
+        Rectangle dirFactorSlider = new(dirFactorBase.Center, SIZE);
+        float dirFactor = 0;
+
+        // Changing the speed Divisor
+        Rectangle DivisorBase = new(LeftPanel.X + 20, LeftPanel.Y + 270, BASES);
+        Rectangle DivisorSlider = new(dirFactorBase.Center, SIZE);
+        float divisor = 1;
 
         while (!Raylib.WindowShouldClose())
         {
@@ -95,7 +112,7 @@ class Program
 
             // Update Particles
             PARTICLE2D.ChangeShape((PARTICLE2D.Shapes)CurrentShape);
-            particleSystem.UpdateParticles(origin,Vector2.Zero,1,START,END,20,350,0.3f,4);
+            particleSystem.UpdateParticles(origin,Direction,1,START,END,20,dirFactor,0.3f,4, divisor);
 
             // Other panels
             Raylib.DrawRectangleRec(LeftPanel, Color.White);
@@ -106,6 +123,25 @@ class Program
             // UPDATING UI
             UISlider(ref CurrentShape, minShape, maxShape, shapeBase, ref sliderShape, Style.BaseSimple);
             Raylib.DrawText($"{(PARTICLE2D.Shapes)CurrentShape}", (int)shapeBase.X, (int)(shapeBase.Y + 50), 25, Color.Black);
+
+            // Direction Changing
+            UISlider(ref Angle, AngleMin, AngleMax, BaseAngle, ref AngleSlider, Style.BaseSimple); // slider
+            UISlider(ref dirFactor, 0, 1500, dirFactorBase, ref dirFactorSlider, Style.BaseSimple); // slider for dir factor
+            UISlider(ref divisor, 1, 10, DivisorBase, ref DivisorSlider, Style.BaseSimple); // for constraint of direction factor
+
+            // Text
+            Raylib.DrawText(directionText, (int)BaseAngle.X, (int)BaseAngle.Y - 50, 25, Color.Black);
+
+            // applying angle to direction
+            Direction.X = MathF.Sin(Angle);
+            Direction.Y = MathF.Cos(Angle);
+
+            // drawing the circle for the direction
+            Raylib.DrawCircleV(CircleCenter, CircleRadius*1.2f, Color.Black);
+            Raylib.DrawCircleV(CircleCenter, CircleRadius, Color.White);
+
+            // Drawing the line
+            Raylib.DrawLineEx(CircleCenter, CircleCenter+(Direction*CircleRadius), 5, Color.Red);
 
             // UPDATING COLORS
 
