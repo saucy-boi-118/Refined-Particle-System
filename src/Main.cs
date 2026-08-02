@@ -13,7 +13,7 @@ class Program
         // -----------------------------------------------------------------------------
         // INIT
         // -----------------------------------------------------------------------------
-        Raylib.InitWindow(WINW, WINH, "Basic Window");
+        Raylib.InitWindow(WINW, WINH, "Particle Editor");
         Raylib.SetTargetFPS(60);
 
         // -----------------------------------------------------------------------------
@@ -132,6 +132,7 @@ class Program
                                            4, // alpha difference each frame
                                            Spread // spread regulation
                                           );
+            Raylib.DrawText($"{(PARTICLE2D.Shapes)CurrentShape}", (int)ShapeSlider.X, (int)(ShapeSlider.Y + ShapeSlider.Height+50), 25, Color.Black);
 
             // -----------------------------------------------------------------------------
             // COLOR PICKING
