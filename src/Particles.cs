@@ -135,11 +135,11 @@ namespace ParticleSystem
                     // Make the color of the particle fade
                     // Particle will die if fade is too small
                     particles.Alpha[i] -= Fade_Change;
-                    if (particles.Alpha[i] < 4) particles.Alive[i] = false;
+                    if (particles.Alpha[i] < 10) particles.Alive[i] = false;
                     particleColor.A = particles.Alpha[i];
 
                     // Rotating the particle
-                    particles.Rotation[i] += (int)(5 % factor); // random-ish?
+                    particles.Rotation[i] += 5; 
 
                 }
                 // The particle is dead

@@ -1,99 +1,99 @@
 ﻿using ParticleSystem;
 using System.Numerics;
-using static UI.UIFunctions;
+using BasicGUI;
 using Raylib_cs;
 
 class Program
 {
     // WINDOW VARIABLES
     public const int WINW = 1024;
-    public const int WINH = 512, THICK = 10;
-    public static readonly Vector2 SIZE = new(45,45);
-    public static readonly Vector2 BASES = new(125,30);
+    public const int WINH = 512;
     public static void Main()
     {
-        // Initialization
+        // -----------------------------------------------------------------------------
+        // INIT
+        // -----------------------------------------------------------------------------
         Raylib.InitWindow(WINW, WINH, "Basic Window");
         Raylib.SetTargetFPS(60);
 
-        // Use of particle system
+        // -----------------------------------------------------------------------------
+        // PARTICLE SYSTEM INTERACTIONS
+        // -----------------------------------------------------------------------------
         PARTICLE2D particleSystem = new(180, PARTICLE2D.Shapes.Septagon);
-        Rectangle psBounds = new(212,0,545,512);
         Vector2 origin;
         Vector2 mouse;
 
-        // Panels for the other UI
+        // -----------------------------------------------------------------------------
+        // BOUNDS AND PANELS
+        // -----------------------------------------------------------------------------
+        Rectangle psBounds = new(212,0,545,512);
         Rectangle LeftPanel = new(0, psBounds.Y, psBounds.X, psBounds.Height);
         Rectangle RightPanel = new(psBounds.Width+psBounds.X, psBounds.Y, WINW-psBounds.X-psBounds.Width, psBounds.Height);
 
-        // Enum value for changing shape
-        float minShape = 0, maxShape = Enum.GetNames<PARTICLE2D.Shapes>().Length-1, CurrentShape = 0;
-        Rectangle shapeBase = new(20,40,125,30);
-        Rectangle sliderShape = new(shapeBase.Center.X,shapeBase.Center.Y, SIZE);
+        // -----------------------------------------------------------------------------
+        // CHANGING THE START AND END COLORS
+        // -----------------------------------------------------------------------------
+        Color startColor = Color.Black;
+        ColorPicker startpicker = new(new(RightPanel.Center.X-50, RightPanel.Y + 125), startColor, "START");
+        Color endColor = Color.White;
+        ColorPicker endpicker = new(new(RightPanel.Center.X+50, RightPanel.Y + 125), endColor, "END");
 
-        // Sliders for changing colors
-
-        // Primary SLIDERS
-        float colorSR = 0, colorSG = 0, colorSB = 0;
-        Color START = Color.Black;
-
-        // RED
-        Rectangle StartR = new(RightPanel.X+35, RightPanel.Y+50, BASES);
-        Rectangle SliderR = new(StartR.Center, SIZE);
-
-        // GREEN
-        Rectangle StartG = new(StartR.X, StartR.Y+60, BASES);
-        Rectangle SliderG = new(StartG.Center, SIZE);
-
-        // BLUE
-        Rectangle StartB = new(StartR.X, StartG.Y+50, BASES);
-        Rectangle SliderB = new(StartB.Center, SIZE);
-
-        // End SLIDERS
-        float colorER = 0, colorEG = 0, colorEB = 0;
-        Color END = Color.Red;
-
-        // RED
-        Rectangle EndR = new(StartB.X, StartB.Y+100, BASES);
-        Rectangle SliderEndR = new(EndR.Center, SIZE);
-
-        // GREEN
-        Rectangle EndG = new(EndR.X, EndR.Y+60, BASES);
-        Rectangle SliderEndG = new(EndG.Center, SIZE);
-
-        // BLUE
-        Rectangle EndB = new(EndG.X, EndG.Y+50, BASES);
-        Rectangle SliderEndB = new(EndB.Center, SIZE);
-        
-        // Labels
-        string primary = "Primary Color";
-        string end = "End Color";
-
-        // clamping colors
-        float minColor = 0;
-        float maxColor = 255;
-
-        // Direction changing and visualization
+        // -----------------------------------------------------------------------------
+        // CHANGING THE DIRECTION
+        // -----------------------------------------------------------------------------
         Vector2 Direction = Vector2.Zero;
-        float Angle = 0, AngleMin = 0, AngleMax = 2*MathF.PI, CircleRadius = 20;
-        Vector2 CircleCenter = new(LeftPanel.Center.X + CircleRadius + 45, LeftPanel.Y+165+(BASES.Y/2));
-        Rectangle BaseAngle = new(LeftPanel.X + 20, LeftPanel.Y+165, BASES);
-        Rectangle AngleSlider = new(BaseAngle.Center, SIZE);
-        string directionText = "DIRECTION";
+        Rectangle DirectionSlider = new(LeftPanel.X + 25, LeftPanel.Y + 40, 100, 30);
+        Vector2 DirectionCenter = DirectionSlider.Center;
+        float circleRadius = 20, angle = 0, angleMax = MathF.PI*2;
+        Vector2 CircleCenter = new(DirectionCenter.X + DirectionSlider.Width, DirectionCenter.Y);
 
-        // Direction factor changing
-        Rectangle dirFactorBase = new(LeftPanel.X + 20, LeftPanel.Y+230, BASES);
-        Rectangle dirFactorSlider = new(dirFactorBase.Center, SIZE);
-        float dirFactor = 0;
+        // -----------------------------------------------------------------------------
+        // DIRECTION STRENGTH
+        // -----------------------------------------------------------------------------
+        Rectangle StrengthSlider = new(LeftPanel.X + 25, LeftPanel.Y + 110, 100, 30);
+        Vector2 StrengthCenter = StrengthSlider.Center;
+        float Strength = 0;
 
-        // Changing the speed Divisor
-        Rectangle DivisorBase = new(LeftPanel.X + 20, LeftPanel.Y + 270, BASES);
-        Rectangle DivisorSlider = new(dirFactorBase.Center, SIZE);
-        float divisor = 1;
+        // -----------------------------------------------------------------------------
+        // START SIZE
+        // -----------------------------------------------------------------------------
+        Rectangle SizeSlider = new(LeftPanel.X + 25, LeftPanel.Y + 180, 100, 30);
+        Vector2 SizeCenter = SizeSlider.Center;
+        float size = 5;
+
+        // -----------------------------------------------------------------------------
+        // LIFESPAN
+        // -----------------------------------------------------------------------------
+        Rectangle LifeSlider = new(LeftPanel.X + 25, LeftPanel.Y + 250, 100, 30);
+        Vector2 LifeCenter = LifeSlider.Center;
+        float Lifespan = 1;
+        
+        // -----------------------------------------------------------------------------
+        // SIZE DIFFERENCE
+        // -----------------------------------------------------------------------------
+        Rectangle SizeDiffSlider = new(LeftPanel.X + 25, LeftPanel.Y + 320, 100, 30);
+        Vector2 SizeDiffCenter = SizeDiffSlider.Center;
+        float SizeDiff = 0.3f;
+        
+        // -----------------------------------------------------------------------------
+        // SPREAD REGULATION
+        // -----------------------------------------------------------------------------
+        Rectangle SpreadSlider = new(LeftPanel.X + 25, LeftPanel.Y + 390, 100, 30);
+        Vector2 SpreadCenter = SpreadSlider.Center;
+        float Spread = 1;
+
+        // -----------------------------------------------------------------------------
+        // SHAPE
+        // -----------------------------------------------------------------------------
+        float minShape = 0, maxShape = Enum.GetNames<PARTICLE2D.Shapes>().Length, CurrentShape = 0;
+        Rectangle ShapeSlider = new(RightPanel.Center.X-100, RightPanel.Y + 200, 200, 85);
+        Vector2 ShapeCenter = ShapeSlider.Center;
 
         while (!Raylib.WindowShouldClose())
         {
+            // -----------------------------------------------------------------------------
             // SPECIFICATIONS FOR THE PARTICLE SYSTEM
+            // -----------------------------------------------------------------------------
 
             mouse = Raylib.GetMousePosition(); // mouse position
 
@@ -103,69 +103,67 @@ class Program
             // If its in the bounds origin is the center of the rectangle
             if (Raylib.CheckCollisionPointRec(mouse, psBounds)) origin = mouse;
 
-            // Drawing
+            // -----------------------------------------------------------------------------
+            // DRAWING
+            // -----------------------------------------------------------------------------
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.White);
 
-            // Particle system bounds(
-            Raylib.DrawRectangleLinesEx(psBounds, THICK, Color.Black);
+            // -----------------------------------------------------------------------------
+            // PANELS
+            // -----------------------------------------------------------------------------
+            BaseGUI.UIPanel(psBounds, 5, 25, Color.Black, "Live Screen");
+            BaseGUI.UIPanel(LeftPanel, 5, 20, Color.Black, "Details");
+            BaseGUI.UIPanel(RightPanel, 5, 20, Color.Black, "Visuals");
+            
+            // -----------------------------------------------------------------------------
+            // UPDATING PARTICLES
+            // -----------------------------------------------------------------------------
+            BaseGUI.UISlider(ShapeSlider, ref ShapeCenter, ref CurrentShape, minShape, maxShape, false, "Shape");
+            PARTICLE2D.ChangeShape((PARTICLE2D.Shapes)CurrentShape); // changing the shape
+            particleSystem.UpdateParticles(origin, // Where the particles start from
+                                           Direction, // Where the particles go to
+                                           (int)Lifespan, // life span of the particles in seconds
+                                           startColor, // start color
+                                           endColor, // end color
+                                           size, // start size
+                                           Strength, // how strong the direction is
+                                           SizeDiff, // size difference each frame
+                                           4, // alpha difference each frame
+                                           Spread // spread regulation
+                                          );
 
-            // Update Particles
-            PARTICLE2D.ChangeShape((PARTICLE2D.Shapes)CurrentShape);
-            particleSystem.UpdateParticles(origin,Direction,1,START,END,20,dirFactor,0.3f,4, divisor);
+            // -----------------------------------------------------------------------------
+            // COLOR PICKING
+            // -----------------------------------------------------------------------------
+            startColor = startpicker.Update();
+            endColor = endpicker.Update();
 
-            // Other panels
-            Raylib.DrawRectangleRec(LeftPanel, Color.White);
-            Raylib.DrawRectangleLinesEx(LeftPanel, THICK, Color.Black);
-            Raylib.DrawRectangleRec(RightPanel, Color.White);
-            Raylib.DrawRectangleLinesEx(RightPanel, THICK, Color.Black);
+            // -----------------------------------------------------------------------------
+            // DIRECTION VARIABLES
+            // -----------------------------------------------------------------------------
 
-            // UPDATING UI
-            UISlider(ref CurrentShape, minShape, maxShape, shapeBase, ref sliderShape, Style.BaseSimple);
-            Raylib.DrawText($"{(PARTICLE2D.Shapes)CurrentShape}", (int)shapeBase.X, (int)(shapeBase.Y + 50), 25, Color.Black);
+            // slider for changing direction
+            BaseGUI.UISlider(DirectionSlider, ref DirectionCenter, ref angle, 0, angleMax, false,"direction");
 
-            // Direction Changing
-            UISlider(ref Angle, AngleMin, AngleMax, BaseAngle, ref AngleSlider, Style.BaseSimple); // slider
-            UISlider(ref dirFactor, 0, 1500, dirFactorBase, ref dirFactorSlider, Style.BaseSimple); // slider for dir factor
-            UISlider(ref divisor, 1, 10, DivisorBase, ref DivisorSlider, Style.BaseSimple); // for constraint of direction factor
+            // updating the direction
+            Direction.X = MathF.Cos(angle);
+            Direction.Y = MathF.Sin(angle);
 
-            // Text
-            Raylib.DrawText(directionText, (int)BaseAngle.X, (int)BaseAngle.Y - 50, 25, Color.Black);
+            // visualizing the direction
+            Raylib.DrawCircleLinesV(CircleCenter, circleRadius, Color.Black);
+            Raylib.DrawLineEx(CircleCenter, CircleCenter + (Direction * circleRadius), 5, Color.Red);
 
-            // applying angle to direction
-            Direction.X = MathF.Sin(Angle);
-            Direction.Y = MathF.Cos(Angle);
+            // strength of the direction
+            BaseGUI.UISlider(StrengthSlider, ref StrengthCenter, ref Strength, 0, 1500, false, "strength");
 
-            // drawing the circle for the direction
-            Raylib.DrawCircleV(CircleCenter, CircleRadius*1.2f, Color.Black);
-            Raylib.DrawCircleV(CircleCenter, CircleRadius, Color.White);
-
-            // Drawing the line
-            Raylib.DrawLineEx(CircleCenter, CircleCenter+(Direction*CircleRadius), 5, Color.Red);
-
-            // UPDATING COLORS
-
-            // Primary
-            Raylib.DrawText(primary, (int)StartR.X, (int)(StartR.Y-25), 20, Color.Black); // text
-            UISlider(ref colorSR, minColor, maxColor, StartR, ref SliderR, Style.BaseSimple); // RED
-            DrawLabel(SliderR, "RED", Color.Red); // label
-            UISlider(ref colorSG, minColor, maxColor, StartG, ref SliderG, Style.BaseSimple); // GREEN
-            DrawLabel(SliderG, "GREEN", Color.Green); // label
-            UISlider(ref colorSB, minColor, maxColor, StartB, ref SliderB, Style.BaseSimple); // BLUE
-            DrawLabel(SliderB, "BLUE", Color.Blue); // label
-            MapColorValueFloat(ref START, colorSR, colorSG, colorSB); // setting color
-            Raylib.DrawText($"{START}", (int)StartB.X-25, (int)(StartB.Y + 35), 15, Color.Black); // draw color
-
-            // End
-            Raylib.DrawText(end, (int)EndR.X, (int)(EndR.Y-25), 20, Color.Black); // text
-            UISlider(ref colorER, minColor, maxColor, EndR, ref SliderEndR, Style.BaseSimple); // RED
-            DrawLabel(SliderEndR, "RED", Color.Red); // label
-            UISlider(ref colorEG, minColor, maxColor, EndG, ref SliderEndG, Style.BaseSimple); // GREEN
-            DrawLabel(SliderEndG, "GREEN", Color.Green); // label
-            UISlider(ref colorEB, minColor, maxColor, EndB, ref SliderEndB, Style.BaseSimple); // BLUE
-            DrawLabel(SliderEndB, "BLUE", Color.Blue); // label
-            MapColorValueFloat(ref END, colorER, colorEG, colorEB); // setting color
-            Raylib.DrawText($"{END}", (int)EndB.X-25, (int)(EndB.Y + 35), 15, Color.Black); // draw color
+            // -----------------------------------------------------------------------------
+            // VISUAL ATTRIBUTES
+            // -----------------------------------------------------------------------------
+            BaseGUI.UISlider(SizeSlider, ref SizeCenter, ref size, 5, 30,false,"size"); // start size
+            BaseGUI.UISlider(LifeSlider, ref LifeCenter, ref Lifespan, 1, 3,false,"lifespan"); // lifespan
+            BaseGUI.UISlider(SizeDiffSlider, ref SizeDiffCenter, ref SizeDiff, 0.3f, 1.1f, false,"size diff"); // size difference
+            BaseGUI.UISlider(SpreadSlider, ref SpreadCenter, ref Spread, 1, 13, false,"spread"); // spread regulation
 
 
             Raylib.EndDrawing();
@@ -175,10 +173,5 @@ class Program
         Raylib.CloseWindow();
     }
 
-    public static void MapColorValueFloat(ref Color c, float r, float g, float b)
-    {
-        c.R = (byte)(r); // RED
-        c.G = (byte)(g); // GREEN
-        c.B = (byte)(b); // BLUE
-    }
+    
 }
