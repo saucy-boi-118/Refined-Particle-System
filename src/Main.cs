@@ -132,7 +132,7 @@ class Program
                                            4, // alpha difference each frame
                                            Spread // spread regulation
                                           );
-            Raylib.DrawText($"{(PARTICLE2D.Shapes)CurrentShape}", (int)ShapeSlider.X, (int)(ShapeSlider.Y + ShapeSlider.Height+50), 25, Color.Black);
+            Raylib.DrawText($"{(PARTICLE2D.Shapes)CurrentShape}", (int)ShapeSlider.Center.X - (Raylib.MeasureText($"{(PARTICLE2D.Shapes)CurrentShape}", 25)/2), (int)(ShapeSlider.Y + ShapeSlider.Height+15), 25, Color.Black);
 
             // -----------------------------------------------------------------------------
             // COLOR PICKING
